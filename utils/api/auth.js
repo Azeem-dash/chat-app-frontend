@@ -10,6 +10,8 @@ const api = axios.create({
 // fetch nonce
 export const fetchNonce = async (address) => {
   try {
+    // console.log("----------here-----------",address);
+
     const { data } = await api.get(`/auth/${address}/nonce`);
     return data.nonce;
   } catch (error) {

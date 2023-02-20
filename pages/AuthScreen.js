@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import { useWalletConnectContext, useWalletConnect } from "@walletconnect/react-native-dapp";
 import { fetchNonce, login } from "../utils/api/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const AuthScreen = () => {
   const navigation = useNavigation();
   const { connector } = useWalletConnectContext();
@@ -14,25 +15,38 @@ const AuthScreen = () => {
 
   const connectWallet = async () => {
     try {
-      let x = await connector.connect();
-      if (connector?._connected) {
-        setWalletAddress(connector.session.accounts[0]);
+      // const IsUserToken = await AsyncStorage.getItem("IsUserToken");
+      // const IsWalletAddress = await AsyncStorage.getItem("IsWalletAddress");
+      // console.log("IsWalletAddress", IsWalletAddress.length, IsWalletAddress);
+      // console.log("IsUserToken", IsUserToken.length, IsUserToken);
 
-        // fetch nonce
-        const nonce = await fetchNonce(connector.session.accounts[0]);
-        // sign nonce
-        const signature = await connector.signPersonalMessage([
-          connector.session.accounts[0],
-          `Welcome to Wallet Messenger!\n\nPlease sign this message to verify ownership of the wallet.\n\nUnique Access Token: ${nonce}`,
-        ]);
+      // if (!IsWalletAddress.length > 2 && !IsUserToken.length > 2) {
+      //   console.log("pressed");
+      //   setWalletAddress(IsWalletAddress);
+      //   setUserToken(IsUserToken);
+      // } else {
+        let x = await connector.connect();
+        if (connector?._connected) {
+          // console.log("connector?._connected",connector?.session);
+          setWalletAddress(connector.session.accounts[0]);
 
-        // send signed nonce
-        const { AccessToken, address } = await login(connector.session.accounts[0], signature);
+          // fetch nonce
+          const nonce = await fetchNonce(connector.session.accounts[0]);
+          // sign nonce
+          const signature = await connector.signPersonalMessage([
+            connector.session.accounts[0],
+            `Welcome to Wallet Messenger!\n\nPlease sign this message to verify ownership of the wallet.\n\nUnique Access Token: ${nonce}`,
+          ]);
+          // send signed nonce
+          const { AccessToken, address } = await login(connector.session.accounts[0], signature);
 
-        // login
-        setWalletAddress(address);
-        setUserToken(AccessToken);
-      }
+          // login
+          // await AsyncStorage.setItem("IsUserToken", JSON.stringify(AccessToken));
+          // await AsyncStorage.setItem("IsWalletAddress", JSON.stringify(address));
+          setWalletAddress(address);
+          setUserToken(AccessToken);
+        }
+      // }
     } catch (error) {}
   };
   return (
