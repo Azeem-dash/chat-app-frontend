@@ -73,7 +73,6 @@ const GroupsTab = () => {
     // console.log("--------------------Gchat", JSON.parse(Gchat));
     // setGchat(Gchat);
   };
-  let NoGroupName = [];
   const onMakeGroup = async () => {
     let GroupInfoArr = [];
     setModalVisible(false);
@@ -86,7 +85,6 @@ const GroupsTab = () => {
     setDataArray([...dataArray, GroupInfo]);
     setGroupName("");
     setAllSelectedMembers([]);
-
     // console.log("----------here-----------", [...dataArray, GroupInfo]);
     await AsyncStorage.setItem("GroupInfo", JSON.stringify([...dataArray, GroupInfo]))
       .then((res) => {
@@ -99,8 +97,7 @@ const GroupsTab = () => {
     navigation.navigate("Chat", {
       dataArray: GroupInfo,
     });
-    // NoGroupName.push(GroupName);
-    // console.log("good", dataArray);
+
   };
   return (
     <View>
@@ -218,7 +215,8 @@ const GroupsTab = () => {
             <BouncyCheckbox
               size={19}
               fillColor="blue"
-              onPress={(isChecked: boolean) => {
+              onPress={(isChecked) => {
+                // console.log(isChecked);
                 setIsPrivate(isChecked);
               }}
               unfillColor="#FFFFFF"

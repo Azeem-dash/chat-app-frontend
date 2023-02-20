@@ -22,7 +22,7 @@ const ChatScreen = (props) => {
   }, [chats]);
   // console.log("userToken ",userToken);
   const api = axios.create({
-    baseURL: "https://chat-api.sonart.tools",
+    baseURL: "http://192.168.1.145:10542",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${userToken}`,
@@ -54,7 +54,7 @@ const ChatScreen = (props) => {
       console.log("call error", e);
     }
   };
-  const onGroupChat = async() => {
+  const onGroupChat = async () => {
     let body = {};
 
     // console.log("body", GroupChat.userInfo);
@@ -65,23 +65,27 @@ const ChatScreen = (props) => {
     });
     body.to = to_users;
     body.text = text;
-    body.IsPrivate = GroupChat.IsPrivate;
+    body.IsPrivate = GroupChat.isPrivate;
+    body.from_user = walletAddress;
     try {
-      const response = await api.post(`/messages/GroupInfo`, body);
-      // let tmpChats = [...chats];
-      // let chatIndex = tmpChats.findIndex((c) => c.name.toLowerCase() == to.toLowerCase());
-      // let currentDate = new Date();
-      // let tmpObj = {
-      //   from_user: walletAddress,
-      //   to_user: to.toLowerCase(),
-      //   message_text: text,
-      //   _createdAt: currentDate.toISOString(),
-      // };
-      // tmpChats[chatIndex].message = text;
-      // tmpChats[chatIndex].messages = [...tmpChats[chatIndex].messages, tmpObj];
-      // tmpChats[chatIndex].time = currentDate.toISOString();
-      // setChats(tmpChats);
-      // setText("");
+      // const response = await api.post(`/messages/groupInfo`, body);
+      // console.log("REsponse ",response);
+      console.log("here->>", chats);
+
+      let tmpChats = [...chats];
+      let chatIndex = tmpChats.findIndex((c) => c.name.toLowerCase() == to.toLowerCase());
+      let currentDate = new Date();
+      let tmpObj = {
+        from_user: walletAddress,
+        to_user: to.toLowerCase(),
+        message_text: text,
+        _createdAt: currentDate.toISOString(),
+      };
+      tmpChats[chatIndex].message = text;
+      tmpChats[chatIndex].messages = [...tmpChats[chatIndex].messages, tmpObj];
+      tmpChats[chatIndex].time = currentDate.toISOString();
+      setChats(tmpChats);
+      setText("");
     } catch (e) {
       console.log("call error", e);
     }
